@@ -1,0 +1,68 @@
+(function(){
+    var util = {
+        loadJs:function(src, fun,id){
+            var oldScript;
+            var script = null;
+            script = document.createElement("script");
+            script.type = "text/javascript";
+            script.id = id||'cy_cmt_num';
+            script.src = src;
+            if (typeof fun === "function") {
+                script.onload = fun;
+            }
+            var headObj = document.getElementsByTagName("head")[0];
+            if (!oldScript) {
+                oldScript = headObj.appendChild(script);
+            }else{
+                headObj.replaceChild(script,oldScript);
+                oldScript = script;
+            }
+        },
+        ismobile : function () {
+            if(typeof navigator != 'undefined'){
+                return navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/iPhone|iPod/i) ? !0 : !1
+            }
+            return false;
+        }(),
+        //签约供稿客服
+        isContractUser:function(){
+            if(typeof(location) != 'undefined' && location.href!=""){
+                var href = location.href || "";
+                var reListArr = [
+                    /page\/tribe\/detail(\?)tribeId=741abcc8f29448f3a46695dd0f7c6a92/, //签约供稿部落
+                    /page\/contractPhotographer\/index/,//个人中心-签约供稿
+                    /page\/upload\/gic/,//编辑类图片、创意类图片上传、邀约上传
+                ];
+                var result = false;
+                for(var j=0;j<reListArr.length;j++){
+                    result = reListArr[j].test(href) || result;
+                }
+                return result;
+            }
+        }()
+        //社区客服
+    }
+    if(!util.ismobile){
+        util.loadJs("https://qiyukf.com/script/03ba8a2baae3de5d77c84143e7040849.js",function(){
+            if(ysf){
+                var userData = typeof(SJ_UT) != 'undefined' ? SJ_UT : {};
+                ysf.on({
+                    'onload': function(){
+                        ysf.config({
+                            uid:userData.id || "",
+                            name:userData.userName || "",
+                            email:userData.email || "",
+                            mobile:userData.phone || "",
+                            staffid:"", // 客服id
+                            groupid: '835028', // 客服组id  图库组
+                            qtype:'4480569', //常见问题模板id
+                            robotId : '146734',
+                            robotShuntSwitch:1 //访客会先由机器人接待，当转人工咨询时再分配给设置的分流客服
+                        });
+                    }
+                });
+            }
+        });
+    }
+})();
+
